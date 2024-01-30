@@ -38,7 +38,7 @@ services:
       KAFKA_LOG_RETENTION_BYTES: 536870912000
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
@@ -50,22 +50,16 @@ services:
     networks:
       - rmoff_kafka
 
-  kafka_ui:
-    image: provectuslabs/kafka-ui
-    hostname: kafka_ui
-    container_name: kafka_ui
-    restart: always
-    ports:
-      - "7000:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: kafka
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_BROKERCONNECT: kafka:29092
-    depends_on:
-      - kafka
-      - zookeeper
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
     networks:
       - rmoff_kafka
+    depends_on:
+      - kafka
+    ports:
+      - 19000:9000
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
 
 volumes:
   kafka:
@@ -74,5 +68,3 @@ volumes:
 networks:
   rmoff_kafka:
     name: rmoff_kafka
-# docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --replication-factor 1 --partitions 2 --create --topic topic-test-1
-# docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --delete --topic topic-test-1

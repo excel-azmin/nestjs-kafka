@@ -8,16 +8,18 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          clientId: 'order-service',
           brokers: ['localhost:9092'],
         },
-        producerOnlyMode: true,
         consumer: {
           groupId: 'order-service',
         },
       },
     },
   );
+
   await app.listen();
+
+  console.log('Microservice is listening');
 }
+
 bootstrap();
