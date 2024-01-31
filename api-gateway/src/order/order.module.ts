@@ -8,15 +8,12 @@ import { OrderService } from './order.service';
     ClientsModule.register([
       {
         name: 'ORDER_SERVICE',
-        transport: Transport.KAFKA,
+        transport: Transport.RMQ,
         options: {
-          client: {
-            clientId: 'order-service',
-            brokers: ['localhost:9092'],
-          },
-          producerOnlyMode: true,
-          consumer: {
-            groupId: 'order-service',
+          urls: ['amqp://localhost:5672'],
+          queue: 'order-service',
+          queueOptions: {
+            durable: false,
           },
         },
       },
